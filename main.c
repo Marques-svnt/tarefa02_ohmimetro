@@ -102,11 +102,12 @@ int main()
     ssd1306_draw_string(&ssd, cores[digito1], 8, 6); // Desenha uma string
     ssd1306_draw_string(&ssd, cores[digito2], 8, 16);  // Desenha uma string
     ssd1306_draw_string(&ssd, multiplicadores[indice_multiplicador], 8, 28);  // Desenha uma string
-    ssd1306_draw_string(&ssd, resist_norm, 80, 16);  // Desenha uma string
+    ssd1306_draw_string(&ssd, "E24", 72, 6);          // Desenha uma string
+    ssd1306_draw_string(&ssd, resist_norm, 72, 16);  // Desenha uma string
     ssd1306_draw_string(&ssd, "ADC", 13, 41);          // Desenha uma string
     ssd1306_draw_string(&ssd, "Resisten.", 50, 41);    // Desenha uma string
     ssd1306_line(&ssd, 44, 37, 44, 60, cor);           // Desenha uma linha vertical
-    ssd1306_line(&ssd, 76, 3, 76, 37, cor);           // Desenha uma linha vertical
+    ssd1306_line(&ssd, 70, 3, 70, 37, cor);           // Desenha uma linha vertical
     ssd1306_draw_string(&ssd, str_x, 8, 52);           // Desenha uma string
     ssd1306_draw_string(&ssd, str_y, 59, 52);          // Desenha uma string
     ssd1306_send_data(&ssd);                           // Atualiza o display*/
