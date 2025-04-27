@@ -13,46 +13,53 @@ if (EXISTS ${picoVscode})
 endif()
 # ====================================================================================
 
-
+# Generated Cmake Pico project file
 
 cmake_minimum_required(VERSION 3.13)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PICO_BOARD pico_w CACHE STRING "Board type")
+
+# Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-# Define o nome do projeto como Teste_ADC_Display, suportando C, C++ e Assembly.
-project(Teste_Voltimetro C CXX ASM) 
+project(main C CXX ASM)
+
+# Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Add executable. Default name is the project name, version 0.1
 
-add_executable(${PROJECT_NAME}  
-        Ohmimetro01.c  # Código principal 
-        lib/ssd1306.c # Biblioteca para o display OLED
-        lib/cores.c
-        lib/pio.c
-        )
+add_executable(main main.c lib/cores.c lib/pio.c lib/ssd1306.c)
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
-        PICO_PRINTF_SUPPORT_FLOAT=1 
-        PICO_STDIO_ENABLE_PRINTF=1
-    )
-    
-pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio)
+pico_set_program_name(main "main")
+pico_set_program_version(main "0.1")
 
-target_link_libraries(${PROJECT_NAME} 
-        pico_stdlib 
+pico_generate_pio_header(main ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio)
+
+# Modify the below lines to enable/disable output over UART/USB
+pico_enable_stdio_uart(main 1)
+pico_enable_stdio_usb(main 1)
+
+# Add the standard library to the build
+target_link_libraries(main
+        pico_stdlib
         hardware_i2c
         hardware_adc
-        hardware_pio
+        hardware_pio)
+
+# Add the standard include files to the build
+target_include_directories(main PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}
+)
+
+# Add any user requested libraries
+target_link_libraries(main 
+        
         )
 
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
-
-pico_add_extra_outputs(${PROJECT_NAME})
+pico_add_extra_outputs(main)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib)
-
-

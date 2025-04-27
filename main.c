@@ -2,7 +2,7 @@
  * Por: Wilton Lacerda Silva
  *    Ohmímetro utilizando o ADC da BitDogLab
  *
- * 
+ *
  * Neste exemplo, utilizamos o ADC do RP2040 para medir a resistência de um resistor
  * desconhecido, utilizando um divisor de tensão com dois resistores.
  * O resistor conhecido é de 10k ohm e o desconhecido é o que queremos medir.
@@ -29,6 +29,19 @@ int R_conhecido = 10000;   // Resistor de 10k ohm
 float R_x = 0.0;           // Resistor desconhecido
 float ADC_VREF = 3.31;     // Tensão de referência do ADC
 int ADC_RESOLUTION = 4095; // Resolução do ADC (12 bits)
+int digito1, digito2, indice_multiplicador;
+
+// Mapeamento de valores para cores
+const char *cores[] = {
+  "Preto", "Marrom", "Vermelho", "Laranja", "Amarelo",
+  "Verde", "Azul", "Violeta", "Cinza", "Branco"
+};
+
+const char *multiplicadores[] = {
+  "Preto", "Marrom", "Vermelho", "Laranja", "Amarelo",
+  "Verde", "Azul", "Violeta", "Cinza", "Branco",
+  "Ouro", "Prata"
+};
 
 // Trecho para modo BOOTSEL com botão B
 #include "pico/bootrom.h"
@@ -42,6 +55,7 @@ int main()
 {
 
   initializePio(); // Inicializar a matriz de leds
+  stdio_init_all();
 
   // Para ser utilizado o modo BOOTSEL com botão B
   gpio_init(botaoB);
@@ -80,8 +94,6 @@ int main()
   bool cor = true;
   while (true)
   {
-    set_one_led(1,2,4);
-    /*
     adc_select_input(2); // Seleciona o ADC para eixo X. O pino 28 como entrada analógica
 
     float soma = 0.0f;
@@ -92,30 +104,27 @@ int main()
     }
     float media = soma / 500.0f;
 
-      // Fórmula simplificada: R_x = R_conhecido * ADC_encontrado /(ADC_RESOLUTION - adc_encontrado)
-      R_x = (R_conhecido * media) / (ADC_RESOLUTION - media);
+    // Fórmula simplificada: R_x = R_conhecido * ADC_encontrado /(ADC_RESOLUTION - adc_encontrado)
+    R_x = (R_conhecido * media) / (ADC_RESOLUTION - media);
+
+    codigoCores(R_x, &digito1, &digito2, &indice_multiplicador);
 
     sprintf(str_x, "%1.0f", media); // Converte o inteiro em string
     sprintf(str_y, "%1.0f", R_x);   // Converte o float em string
 
-    //codigoCores(R_x);
-    set_one_led(20,20,0);
-
-    // cor = !cor;
     //  Atualiza o conteúdo do display com animações
     ssd1306_fill(&ssd, !cor);                          // Limpa o display
     ssd1306_rect(&ssd, 3, 3, 122, 60, cor, !cor);      // Desenha um retângulo
-    ssd1306_line(&ssd, 3, 25, 123, 25, cor);           // Desenha uma linha
     ssd1306_line(&ssd, 3, 37, 123, 37, cor);           // Desenha uma linha
-    ssd1306_draw_string(&ssd, "CEPEDI   TIC37", 8, 6); // Desenha uma string
-    ssd1306_draw_string(&ssd, "EMBARCATECH", 20, 16);  // Desenha uma string
-    ssd1306_draw_string(&ssd, "  Ohmimetro", 10, 28);  // Desenha uma string
+    ssd1306_draw_string(&ssd, cores[digito1], 8, 6); // Desenha uma string
+    ssd1306_draw_string(&ssd, cores[digito2], 8, 16);  // Desenha uma string
+    ssd1306_draw_string(&ssd, multiplicadores[indice_multiplicador], 8, 28);  // Desenha uma string
     ssd1306_draw_string(&ssd, "ADC", 13, 41);          // Desenha uma string
     ssd1306_draw_string(&ssd, "Resisten.", 50, 41);    // Desenha uma string
     ssd1306_line(&ssd, 44, 37, 44, 60, cor);           // Desenha uma linha vertical
     ssd1306_draw_string(&ssd, str_x, 8, 52);           // Desenha uma string
     ssd1306_draw_string(&ssd, str_y, 59, 52);          // Desenha uma string
-    ssd1306_send_data(&ssd);                           // Atualiza o display
-    sleep_ms(700);*/
+    ssd1306_send_data(&ssd);                           // Atualiza o display*/
+    sleep_ms(700);
   }
 }

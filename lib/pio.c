@@ -13,10 +13,11 @@
 /* Buffer para armazenar quais LEDs estão ligados matriz 5x5
 (obs: devido a organização do diagrama, teremos que configurar as matrizes "espelhadas")*/
 uint8_t led_buffer[NUM_PIXELS] = {
-    0, 0, 0, 0, 0, 
-    0, 2, 2, 2, 0, 
+    // Matriz que forma as linhas de cor do resistor
     0, 0, 0, 0, 0, 
     0, 3, 3, 3, 0, 
+    0, 0, 0, 0, 0, 
+    0, 2, 2, 2, 0, 
     0, 1, 1, 1, 0,
 };
 
@@ -36,20 +37,20 @@ typedef struct {
     uint8_t b;
 } Color;
 
-// Definir as cores corretamente
+// Definir as cores
 static const Color colors[] = {
     {0, 0, 0},      // 0 - preto
-    {20, 5, 0},     // 1 - marrom
-    {0, 20, 0},     // 2 - vermelho
-    {20, 10, 0},    // 3 - laranja
-    {20, 20, 0},    // 4 - amarelo
-    {20, 0, 0},     // 5 - verde
+    {20, 2, 0},     // 1 - marrom (praticamente laranja escuro)
+    {20, 0, 0},     // 2 - vermelho
+    {20, 5, 0},    // 3 - laranja
+    {20, 10, 0},    // 4 - amarelo
+    {0, 20, 0},     // 5 - verde
     {0, 0, 20},     // 6 - azul
     {10, 0, 20},    // 7 - violeta
     {10, 10, 10},   // 8 - cinza
     {20, 20, 20},   // 9 - branco
-    {40, 40, 0},    // 10 - dourado
-    {40, 40, 40}    // 11 - prata
+    {40, 40, 0},    // 10 - dourado (amarelo mais intenso)
+    {40, 40, 40}    // 11 - prata (branco mais intenso)
 };
 
 void set_one_led(int digito1, int digito2, int multiplicador)
