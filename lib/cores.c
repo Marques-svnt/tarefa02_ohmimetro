@@ -5,7 +5,7 @@
 #include "lib/ssd1306.h"
 #include "lib/font.h"
 
-// Função que normaliza o valor para o e24
+// Função que normaliza o valor para o e24 (o 100 foi adicionado)
 int normalizar_para_e24(int valor_norm) {
     const int e24[] = {10, 11, 12, 13, 15, 16, 18, 20, 22, 24, 27, 30,
                        33, 36, 39, 43, 47, 51, 56, 62, 68, 75, 82, 91, 100};
