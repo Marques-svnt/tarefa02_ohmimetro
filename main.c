@@ -29,7 +29,11 @@ int R_conhecido = 10000;   // Resistor de 10k ohm
 float R_x = 0.0;           // Resistor desconhecido
 float ADC_VREF = 3.31;     // Tensão de referência do ADC
 int ADC_RESOLUTION = 4095; // Resolução do ADC (12 bits)
-int digito1, digito2, indice_multiplicador;
+float tensao;
+char str_x[5]; // Buffer para armazenar a string
+char str_y[5]; // Buffer para armazenar a string
+char resist_norm[5]; // Buffer para armazenar a string
+int digito1, digito2, indice_multiplicador, valor_norm; // Declaração das variaveis do codigo de cores
 
 // Mapeamento de valores para cores
 const char *cores[] = {
@@ -43,30 +47,10 @@ const char *multiplicadores[] = {
   "Ouro", "Prata"
 };
 
-// Trecho para modo BOOTSEL com botão B
-#include "pico/bootrom.h"
-#define botaoB 6
-void gpio_irq_handler(uint gpio, uint32_t events)
-{
-  reset_usb_boot(0, 0);
-}
-
 int main()
 {
-
   initializePio(); // Inicializar a matriz de leds
   stdio_init_all();
-
-  // Para ser utilizado o modo BOOTSEL com botão B
-  gpio_init(botaoB);
-  gpio_set_dir(botaoB, GPIO_IN);
-  gpio_pull_up(botaoB);
-  gpio_set_irq_enabled_with_callback(botaoB, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-  // Aqui termina o trecho para modo BOOTSEL com botão B
-
-  gpio_init(Botao_A);
-  gpio_set_dir(Botao_A, GPIO_IN);
-  gpio_pull_up(Botao_A);
 
   // I2C Initialisation. Using it at 400Khz.
   i2c_init(I2C_PORT, 400 * 1000);
@@ -87,9 +71,6 @@ int main()
   adc_init();
   adc_gpio_init(ADC_PIN); // GPIO 28 como entrada analógica
 
-  float tensao;
-  char str_x[5]; // Buffer para armazenar a string
-  char str_y[5]; // Buffer para armazenar a string
 
   bool cor = true;
   while (true)
@@ -107,10 +88,12 @@ int main()
     // Fórmula simplificada: R_x = R_conhecido * ADC_encontrado /(ADC_RESOLUTION - adc_encontrado)
     R_x = (R_conhecido * media) / (ADC_RESOLUTION - media);
 
-    codigoCores(R_x, &digito1, &digito2, &indice_multiplicador);
+    codigoCores(R_x, &digito1, &digito2, &indice_multiplicador, &valor_norm); // Chama a função que vai retornar os digitos para encontrar as cores dos vetores e o valor normalizado
 
-    sprintf(str_x, "%1.0f", media); // Converte o inteiro em string
-    sprintf(str_y, "%1.0f", R_x);   // Converte o float em string
+    // Converte os valores em float e int para strings para usar no display
+    sprintf(resist_norm, "%d", valor_norm);
+    sprintf(str_x, "%1.0f", media); 
+    sprintf(str_y, "%1.0f", R_x); 
 
     //  Atualiza o conteúdo do display com animações
     ssd1306_fill(&ssd, !cor);                          // Limpa o display
@@ -119,9 +102,11 @@ int main()
     ssd1306_draw_string(&ssd, cores[digito1], 8, 6); // Desenha uma string
     ssd1306_draw_string(&ssd, cores[digito2], 8, 16);  // Desenha uma string
     ssd1306_draw_string(&ssd, multiplicadores[indice_multiplicador], 8, 28);  // Desenha uma string
+    ssd1306_draw_string(&ssd, resist_norm, 80, 16);  // Desenha uma string
     ssd1306_draw_string(&ssd, "ADC", 13, 41);          // Desenha uma string
     ssd1306_draw_string(&ssd, "Resisten.", 50, 41);    // Desenha uma string
     ssd1306_line(&ssd, 44, 37, 44, 60, cor);           // Desenha uma linha vertical
+    ssd1306_line(&ssd, 76, 3, 76, 37, cor);           // Desenha uma linha vertical
     ssd1306_draw_string(&ssd, str_x, 8, 52);           // Desenha uma string
     ssd1306_draw_string(&ssd, str_y, 59, 52);          // Desenha uma string
     ssd1306_send_data(&ssd);                           // Atualiza o display*/

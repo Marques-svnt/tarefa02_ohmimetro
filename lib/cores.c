@@ -5,7 +5,8 @@
 #include "lib/ssd1306.h"
 #include "lib/font.h"
 
-void codigoCores(float R_x, int *digito1, int *digito2, int *indice_multiplicador) {
+// Função que converte a resistencia desconhecida nos digitos para a faixa de cores e no valor normalizado
+void codigoCores(float R_x, int *digito1, int *digito2, int *indice_multiplicador, int *valor_norm) {
     int multiplicador;
     int i;
 
@@ -19,11 +20,12 @@ void codigoCores(float R_x, int *digito1, int *digito2, int *indice_multiplicado
         }
     }
 
+    // Obtem os numeros das faixas
     int valor_temp = (int)(R_x / pow(10, multiplicador) + 0.5);
     *digito1 = valor_temp / 10;
     *digito2 = valor_temp % 10;
 
-    // Ajustar o índice do multiplicador para o array
+    // Ajustar o índice do multiplicador para o array de cores
     if (multiplicador >= 0) {
         *indice_multiplicador = multiplicador;
     } else if (multiplicador == -1) {
@@ -32,5 +34,7 @@ void codigoCores(float R_x, int *digito1, int *digito2, int *indice_multiplicado
         *indice_multiplicador = 11; // prata
     }
 
-    set_one_led(*digito1, *digito2, multiplicador);  // Chama a função com os novos valores
+    *valor_norm = ((*digito1 * 10) + *digito2) * pow(10, multiplicador); // Calcula o valor normalizado
+
+    set_one_led(*digito1, *digito2, multiplicador);  // Chama a função que vai colorir a matriz de leds
 }
